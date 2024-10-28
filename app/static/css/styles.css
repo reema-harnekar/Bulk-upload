@@ -1,0 +1,39 @@
+body {
+    background-color: #ffffff; /* White background for the rest of the page */
+}
+
+.login-container {
+    max-width: 400px; /* Maximum width for the card */
+    margin: auto; /* Centering the card */
+    margin-top: 100px; /* Top margin */
+}
+
+.navbar {
+    background-color: #f8f9fa; /* Light grey background for the navbar */
+}
+
+.navbar .navbar-brand,
+.navbar .nav-link {
+    color: #343a40; /* Dark color for links */
+}
+
+.navbar .nav-link:hover {
+    color: #007bff; /* Change link color on hover */
+}
+
+/* Card style for the upload data page */
+.card {
+    margin-top: 50px; /* Adds spacing from the top */
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .card-header h2 {
+        font-size: 1.5rem; /* Smaller font size for mobile */
+    }
+}
+
+/* Additional button styles */
+.btn-success {
+    font-size: 1.2rem; /* Slightly larger button text */
+}

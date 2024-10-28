@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block title %}Query Builder{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Query Builder</h2>
+    <div class="alert alert-info text-center">
+        <strong>Total Records:</strong> <span id="total-records">Loading...</span>
+    </div>
+
+    <form method="POST" action="">
+        <div class="row mb-3">
+            <div class="col">
+                <label for="keyword">Keyword:</label>
+                <input type="text" class="form-control" id="keyword" name="keyword" placeholder="Enter keyword">
+            </div>
+            <div class="col">
+                <label for="industry">Industry:</label>
+                <select class="form-control" id="industry" name="industry">
+                    <option value="">Select Industry</option>
+                </select>
+            </div>
+        </div>
+    
+        <div class="row mb-3">
+            <div class="col">
+                <label for="year_founded">Year Founded:</label>
+                <select class="form-control" id="year_founded" name="year_founded">
+                    <option value="">Select Year</option>
+                </select>
+            </div>
+            <div class="col">
+                <label for="city">City:</label>
+                <select class="form-control" id="city" name="city">
+                    <option value="">Select City</option>
+                </select>
+            </div>
+        </div>
+    
+        <div class="row mb-3">
+            <div class="col">
+                <label for="state">State:</label>
+                <select class="form-control" id="state" name="state">
+                    <option value="">Select State</option>
+                </select>
+            </div>
+            <div class="col">
+                <label for="country">Country:</label>
+                <select class="form-control" id="country" name="country">
+                    <option value="">Select Country</option>
+                </select>
+            </div>
+        </div>
+            
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">Submit Query</button>
+            <button type="reset" class="btn btn-secondary">Reset</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function() {
+        // Fetch total records
+        $.getJSON('/api/total_records', function(data) {
+            $('#total-records').text(data.total);
+        });
+
+        // Fetch industries
+        $.getJSON('/api/industries', function(data) {
+            let industrySelect = $('#industry');
+            data.forEach(function(industry) {
+                industrySelect.append(new Option(industry, industry));
+            });
+        });
+
+        // Fetch years founded
+        $.getJSON('/api/years_founded', function(data) {
+            let yearSelect = $('#year_founded');
+            data.forEach(function(year) {
+                yearSelect.append(new Option(year, year));
+            });
+        });
+
+        // Fetch states
+        $.getJSON('/api/states', function(data) {
+            let stateSelect = $('#state');
+            data.forEach(function(state) {
+                stateSelect.append(new Option(state, state));
+            });
+        });
+
+        // Fetch states
+        $.getJSON('/api/cities', function(data) {
+            let stateSelect = $('#city');
+            data.forEach(function(state) {
+                stateSelect.append(new Option(state, state));
+            });
+        });
+
+        // Fetch countries
+        $.getJSON('/api/countries', function(data) {
+            let countrySelect = $('#country');
+            data.forEach(function(country) {
+                countrySelect.append(new Option(country, country));
+            });
+        });
+
+        $('form').on('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+    
+            // Serialize the form data
+            const formData = $(this).serialize();
+    
+            // Submit the form data to the API
+            $.ajax({
+                type: 'POST',
+                url: '/submit_query',
+                data: formData,
+                success: function(response) {
+                    // Update the total records element with the response
+                    $('#total-records').text(response.total_records);
+                },
+                error: function(error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+
+        $('#reset-button').on('click', function() {
+            $('#query-form')[0].reset();  // Reset the form fields
+        });
+
+    });
+</script>
+{% endblock %}

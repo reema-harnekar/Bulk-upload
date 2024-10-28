@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload Data{% endblock %}
+
+{% block content %}
+<div class="card shadow">
+    <div class="card-header text-center">
+        <h2>Upload Your CSV Data</h2>
+    </div>
+    <div class="card-body">
+        <div class="form-group">
+            <label for="file" class="font-weight-bold">Choose CSV File:</label>
+            <input type="file" class="form-control-file" id="file" accept=".csv" required>
+            <small class="form-text text-muted">Max file size: 1GB. Only .csv files are allowed.</small>
+        </div>
+        <div class="form-group text-center">
+            <button type="button" class="btn btn-success btn-lg" onclick="uploadFile()">Upload</button>
+        </div>
+        <!-- Progress bar -->
+        <div class="progress mt-3" style="display: none;">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%">0%</div>
+        </div>
+    </div>
+    <div class="card-footer text-muted text-center">
+        <p>Once uploaded, you can filter and interact with your data.</p>
+    </div>
+</div>
+
+
+<script>
+    function uploadFile() {
+        var fileInput = $('#file')[0];
+        if (fileInput.files.length === 0) {
+            alert("Please select a file to upload.");
+            return;
+        }
+
+        var formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+
+        // AJAX request to handle the file upload with progress tracking
+        $.ajax({
+            url: "{{ url_for('upload_file') }}",  // Call the /upload_file endpoint
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            xhr: function () {
+                var xhr = new XMLHttpRequest();
+                xhr.upload.addEventListener('progress', function (e) {
+                    if (e.lengthComputable) {
+                        var percentComplete = (e.loaded / e.total) * 100;
+                        $('.progress').show();
+                        $('.progress-bar').width(percentComplete + '%');
+                        $('.progress-bar').html(Math.round(percentComplete) + '%');
+                    }
+                });
+                return xhr;
+            },
+            success: function (response) {
+                alert(response.message);
+                $('.progress').hide();
+                $('.progress-bar').width('0%').html('0%');
+                window.location.href = "{{ url_for('query_builder') }}";
+            },
+            error: function (response) {
+                alert(response.responseJSON.error);
+                $('.progress').hide();
+                $('.progress-bar').width('0%').html('0%');
+            }
+        });
+    }
+</script>
+{% endblock %}
